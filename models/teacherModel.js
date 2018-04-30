@@ -19,6 +19,10 @@ var TeacherSchema = new Schema({
         type: String,
         trim: true
     },
+    username: {
+        type: String,
+        trim: true
+    }
 });
 
 TeacherSchema.methods.comparePassword = () =>{
