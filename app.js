@@ -9,7 +9,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/teachers');
 const mongoose = require('mongoose');
 const Teacher = require('./models/teacherModel');
-const bodyParser = require('');
+const bodyParser = require('body-parser');
 var app = express();
 
 // view engine setup
