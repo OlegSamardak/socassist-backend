@@ -3,7 +3,8 @@
 var mongoose = require('mongoose'),
     jwt = require('jsonwebtoken'),
     bcrypt = require('bcrypt'),
-    Teacher = mongoose.model('Teacher');
+    Teacher = mongoose.model('Teacher'),
+    teacherService = require('../services/teacher-service');
 
 exports.register = (req, res) => {
     var newTeacher = new Teacher(req.body);
@@ -21,15 +22,17 @@ exports.register = (req, res) => {
 };
 
 exports.sign_in = (req, res) => {
-    Teacher.findOne({
-        username: req.body.username
-    }, function(err, teacher) {
-        if (err) throw err;
-        if (!teacher || !teacher.comparePassword(req.body.password)) {
-            return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
-        }
-        return res.json({ token: jwt.sign({ name: teacher.name, patronimic: teacher.patronimic, surname: teacher.surname, _id: teacher._id, username: teacher.username }, 'RESTFULAPIs') });
-    });
+    console.log('im in service');
+        teacherService.findOneTeacher({
+            username: res.req.body.username
+        }).then((teacher) => {
+            console.log('im in FindOne callback');
+            if (!teacher) {
+                console.log('auth failed');
+                return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
+            }
+            return res.json({ token: jwt.sign({ name: teacher.name, patronimic: teacher.patronimic, surname: teacher.surname, _id: teacher._id, username: teacher.username }, 'RESTFULAPIs') });
+        })
 };
 
 exports.loginRequired = (req, res, next) => {

@@ -4,4 +4,6 @@ const app = express();
 const authService = require('../services/auth-service');
 app.use(cors());
 
-app.route('/auth/sign_in').post(authService.sign_in);
+app.post('/auth/sign_in', authService.sign_in);
+
+module.exports = app;

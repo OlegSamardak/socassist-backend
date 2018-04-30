@@ -1,22 +1,33 @@
 const MongoClient = require('mongodb').MongoClient;
 const ENV_CONST = require('../environment.const');
+const mongoose = require('mongoose');
+const Teacher = require('../models/teacherModel');
+const bcrypt = require('bcrypt');
 
-
-findAllTeachers = () =>{
+    findAllTeachers = () =>{
     return new Promise((resolve, reject) =>
     {
-        MongoClient.connect(ENV_CONST.DB_URL, (err, db) => {
-            if (err) throw err;
-            let dbo = db.db("socassist");
-            dbo.collection("teachers").find().toArray((err, result) => {
-                if (err) throw err;
-                console.dir(result);
-                db.close();
-                resolve(result);
-            });
+        Teacher.find({}, (err, teachers) =>{
+            resolve(teachers);
         });
-    })
+    });
 };
+
+findOneTeacher = (findingTeacher) =>{
+    return new Promise((resolve, reject) =>
+    {
+        Teacher.findOne(findingTeacher, (err, foundTeacher) =>{
+            bcrypt.compare(findingTeacher.pass, foundTeacher.pass, ()=>{
+                console.log(foundTeacher);
+                resolve(foundTeacher);
+            });
+
+        });
+    });
+};
+
+module.exports.findOneTeacher = findOneTeacher;
 module.exports.findAllTeachers = findAllTeachers;
+
 
 

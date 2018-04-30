@@ -1,6 +1,9 @@
 const mongoose = require('mongoose'),
     bcrypt = require('bcrypt'),
     Schema = mongoose.Schema;
+const ENV_CONST = require('../environment.const');
+
+var db = mongoose.createConnection(ENV_CONST.DB_URL);
 
 var TeacherSchema = new Schema({
     name: {
@@ -15,7 +18,7 @@ var TeacherSchema = new Schema({
         type: String,
         trim: true
     },
-    pass: {
+    hash_password: {
         type: String,
         trim: true
     },
@@ -25,8 +28,7 @@ var TeacherSchema = new Schema({
     }
 });
 
-TeacherSchema.methods.comparePassword = () =>{
-    return bcrypt.compareSync(password, this.password)
-};
 
-mongoose.model('Teacher', TeacherSchema);
+var Teacher = db.model('Teacher', TeacherSchema);
+
+module.exports = Teacher;
