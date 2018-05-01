@@ -24,7 +24,8 @@ exports.register = (req, res) => {
 exports.sign_in = (req, res) => {
     console.log('im in service');
         teacherService.findOneTeacher({
-            username: res.req.body.username
+            username: res.req.body.username,
+            pass: res.req.body.password
         }).then((teacher) => {
             console.log('im in FindOne callback');
             if (!teacher) {
@@ -32,6 +33,9 @@ exports.sign_in = (req, res) => {
                 return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
             }
             return res.json({ token: jwt.sign({ name: teacher.name, patronimic: teacher.patronimic, surname: teacher.surname, _id: teacher._id, username: teacher.username }, 'RESTFULAPIs') });
+        }).catch((e) =>{
+            console.log(e);
+            return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
         })
 };
 
@@ -41,4 +45,20 @@ exports.loginRequired = (req, res, next) => {
     } else {
         return res.status(401).json({ message: 'Unauthorized user!' });
     }
+};
+
+exports.verify = (token) =>{
+    return new Promise((resolve, reject) =>
+    {
+
+            jwt.verify(token, 'RESTFULAPIs', (err, decoded) =>{
+                if (err)
+                    reject(err);
+                resolve(decoded);
+            }).catch(e =>{
+                reject(e)
+            });
+
+
+    });
 };

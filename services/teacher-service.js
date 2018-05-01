@@ -17,11 +17,15 @@ findOneTeacher = (findingTeacher) =>{
     return new Promise((resolve, reject) =>
     {
         Teacher.findOne(findingTeacher, (err, foundTeacher) =>{
-            bcrypt.compare(findingTeacher.pass, foundTeacher.pass, ()=>{
-                console.log(foundTeacher);
-                resolve(foundTeacher);
-            });
-
+            if (err || !foundTeacher){
+                reject(err);
+            }
+            if (foundTeacher) {
+                bcrypt.compare(findingTeacher.pass, foundTeacher.pass, () => {
+                    console.log(foundTeacher);
+                    resolve(foundTeacher);
+                });
+            }
         });
     });
 };
